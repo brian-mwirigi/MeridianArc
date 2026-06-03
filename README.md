@@ -1,5 +1,7 @@
 # MERIDIAN POMODORO ENGINE
 
+![Meridian Interface](public/Screenshot%202026-06-03%20140104.png)
+
 Meridian is a high-performance, brutalist Pomodoro timer built for engineers, hackers, and deep-work practitioners. Designed with an uncompromising aesthetic, Meridian eliminates distractions, strips away unnecessary UI chrome, and provides a raw, unapologetic focus environment.
 
 ## OVERVIEW
