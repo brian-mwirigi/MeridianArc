@@ -6,9 +6,12 @@ import { Settings } from "./components/Settings";
 import { Header } from "./components/Header";
 import { KeyboardShortcuts } from "./components/KeyboardShortcuts";
 import { useFocusMode } from "./hooks/useFocusMode";
+import { History } from "./components/History";
+import { useState } from "react";
 
 function App() {
   const { focusMode, toggle } = useFocusMode();
+  const [showHistory, setShowHistory] = useState(false);
 
   if (focusMode) {
     return (
@@ -36,19 +39,21 @@ function App() {
       </div>
 
       {/* Main dashboard grid */}
-      <div className="flex-1 grid grid-cols-[1fr_380px] gap-0 overflow-hidden min-h-0">
-        {/* LEFT — Timer */}
-        <div className="flex items-center justify-center border-r border-edge px-8">
-          <div className="w-full max-w-[500px]">
-            <Timer />
+      <div className="flex-1 overflow-y-auto md:overflow-hidden">
+        <div className="flex flex-col md:grid md:grid-cols-[1fr_380px] lg:grid-cols-[1fr_420px] gap-0 min-h-full">
+          {/* LEFT — Timer */}
+          <div className="flex items-center justify-center md:border-r border-edge px-4 py-8 md:px-8 md:py-0 min-h-[500px] md:min-h-0">
+            <div className="w-full max-w-[500px]">
+              <Timer />
+            </div>
           </div>
-        </div>
 
-        {/* RIGHT — Panels stacked */}
-        <div className="flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto min-h-0">
-            <TaskManager />
-            <StatsDashboard />
+          {/* RIGHT — Panels stacked */}
+          <div className="flex flex-col">
+            <div className="flex-1 overflow-y-visible md:overflow-y-auto">
+              <TaskManager />
+              <StatsDashboard />
+            </div>
           </div>
         </div>
       </div>
@@ -61,8 +66,16 @@ function App() {
         ○ FOCUS
       </button>
 
+      <button
+        onClick={() => setShowHistory(true)}
+        className="fixed bottom-5 left-20 text-[10px] uppercase tracking-[0.2em] text-dim hover:text-muted border border-edge px-3 py-2 bg-void hover:bg-surface transition-colors z-50"
+      >
+        LOG
+      </button>
+
       <Settings />
       <KeyboardShortcuts />
+      {showHistory && <History onClose={() => setShowHistory(false)} />}
     </div>
   );
 }

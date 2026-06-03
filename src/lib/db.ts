@@ -8,7 +8,8 @@ declare global {
   }
 }
 
-// Mock data for browser fallback
+// In-memory data for browser fallback
+let mockId = 1;
 const mockSessions: any[] = [];
 const isBrowser = typeof window !== 'undefined' && !window.__TAURI_INTERNALS__;
 
@@ -47,21 +48,26 @@ export async function initSchema() {
 
 export async function logSession(type: string, duration: number) {
   if (isBrowser) {
-    mockSessions.push({ type, duration, created_at: new Date().toISOString() });
+    mockSessions.push({ id: mockId++, type, duration, created_at: new Date().toISOString() });
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('session_logged'));
     return;
   }
   const db = await getDb();
   if (!db) return;
   await db.execute('INSERT INTO sessions (type, duration) VALUES ($1, $2)', [type, duration]);
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('session_logged'));
 }
 
 export async function getSessionStats() {
   if (isBrowser) {
-    // Return mock data for the heatmap
-    const today = new Date().toISOString().split('T')[0];
-    return [
-      { date: today, count: 4 }
-    ];
+    const stats: Record<string, number> = {};
+    mockSessions.forEach(s => {
+      if (s.type === 'work') {
+        const d = s.created_at.split('T')[0];
+        stats[d] = (stats[d] || 0) + 1;
+      }
+    });
+    return Object.entries(stats).map(([date, count]) => ({ date, count }));
   }
   
   const db = await getDb();
@@ -73,6 +79,23 @@ export async function getSessionStats() {
     WHERE type = 'work'
     GROUP BY date(created_at)
   `);
+  
+  return result;
+}
+
+export async function getSessionHistory(limit = 50) {
+  if (isBrowser) {
+    return [...mockSessions].reverse().slice(0, limit);
+  }
+  
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select<{id: number, type: string, duration: number, created_at: string}[]>(`
+    SELECT * FROM sessions 
+    ORDER BY created_at DESC 
+    LIMIT $1
+  `, [limit]);
   
   return result;
 }

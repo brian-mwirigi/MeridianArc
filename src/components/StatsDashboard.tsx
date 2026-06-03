@@ -6,11 +6,17 @@ export function StatsDashboard() {
   const [stats, setStats] = useState<{ date: string; count: number }[]>([]);
   const [totalSessions, setTotalSessions] = useState(0);
 
-  useEffect(() => {
+  const loadStats = () => {
     getSessionStats().then((data: any) => {
       setStats(data);
       setTotalSessions(data.reduce((a: number, c: any) => a + c.count, 0));
     });
+  };
+
+  useEffect(() => {
+    loadStats();
+    window.addEventListener('session_logged', loadStats);
+    return () => window.removeEventListener('session_logged', loadStats);
   }, []);
 
   // Streak

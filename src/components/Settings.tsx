@@ -5,7 +5,8 @@ export function Settings() {
   const {
     workDuration, shortBreakDuration, longBreakDuration,
     autoStartPomodoros, autoStartBreaks,
-    setWorkDuration,
+    tickSoundEnabled, volume,
+    setWorkDuration, setTickSoundEnabled, setVolume
   } = useTimerStore();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -59,20 +60,47 @@ export function Settings() {
           </div>
         </div>
 
-        {/* Toggles */}
+        {/* Automation & Sound */}
         <div className="px-4 py-4">
-          <div className="text-[9px] text-dim uppercase tracking-widest mb-3">AUTOMATION</div>
-          {[
-            { label: 'Auto-start breaks', on: autoStartBreaks },
-            { label: 'Auto-start pomodoros', on: autoStartPomodoros },
-          ].map(({ label, on }) => (
-            <div key={label} className="flex items-center justify-between py-2.5 border-b border-edge/50 last:border-b-0">
-              <span className="text-xs text-muted">{label}</span>
-              <span className={`text-[10px] ${on ? 'text-neon' : 'text-dim'}`}>
-                {on ? '[ON]' : '[OFF]'}
-              </span>
+          <div className="text-[9px] text-dim uppercase tracking-widest mb-3">SYSTEM PREFERENCES</div>
+          
+          <div className="flex items-center justify-between py-2.5 border-b border-edge/50">
+            <span className="text-xs text-muted">Auto-start breaks</span>
+            <span className={`text-[10px] ${autoStartBreaks ? 'text-neon' : 'text-dim'}`}>
+              {autoStartBreaks ? '[ON]' : '[OFF]'}
+            </span>
+          </div>
+          
+          <div className="flex items-center justify-between py-2.5 border-b border-edge/50">
+            <span className="text-xs text-muted">Auto-start pomodoros</span>
+            <span className={`text-[10px] ${autoStartPomodoros ? 'text-neon' : 'text-dim'}`}>
+              {autoStartPomodoros ? '[ON]' : '[OFF]'}
+            </span>
+          </div>
+
+          <div 
+            className="flex items-center justify-between py-2.5 border-b border-edge/50 cursor-pointer hover:bg-surface/50"
+            onClick={() => setTickSoundEnabled(!tickSoundEnabled)}
+          >
+            <span className="text-xs text-muted">Mechanical Tick Sound</span>
+            <span className={`text-[10px] ${tickSoundEnabled ? 'text-neon' : 'text-dim'}`}>
+              {tickSoundEnabled ? '[ON]' : '[OFF]'}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-xs text-muted">Alarm Volume</span>
+            <div className="flex items-center gap-2">
+              <input 
+                type="range" 
+                min="0" max="1" step="0.05"
+                value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                className="w-24 accent-neon"
+              />
+              <span className="text-[10px] text-dim w-8 text-right">{Math.round(volume * 100)}%</span>
             </div>
-          ))}
+          </div>
         </div>
 
         {/* Footer */}

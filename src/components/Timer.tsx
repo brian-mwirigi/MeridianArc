@@ -5,12 +5,14 @@ const LABELS: Record<SessionType, string> = {
   work: 'FOCUS',
   shortBreak: 'SHORT BREAK',
   longBreak: 'LONG BREAK',
+  stopwatch: 'STOPWATCH',
 };
 
 const COLORS: Record<SessionType, { text: string; glow: string; bar: string }> = {
   work: { text: 'text-hot', glow: 'neon-hot', bar: 'bg-hot shadow-[0_0_8px_rgba(255,62,62,0.4)]' },
   shortBreak: { text: 'text-neon', glow: 'neon', bar: 'bg-neon shadow-[0_0_8px_rgba(0,255,159,0.4)]' },
   longBreak: { text: 'text-amber', glow: 'neon-amber', bar: 'bg-amber shadow-[0_0_8px_rgba(255,184,0,0.4)]' },
+  stopwatch: { text: 'text-white', glow: 'neon', bar: 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' },
 };
 
 export function Timer() {
@@ -41,6 +43,7 @@ export function Timer() {
     { key: 'work', label: 'FOCUS', shortcut: '1' },
     { key: 'shortBreak', label: 'SHORT', shortcut: '2' },
     { key: 'longBreak', label: 'LONG', shortcut: '3' },
+    { key: 'stopwatch', label: 'STOPWATCH', shortcut: '4' },
   ];
 
   return (
@@ -70,7 +73,7 @@ export function Timer() {
 
         {/* The clock */}
         <div className="relative mb-6">
-          <div className={`text-[8rem] leading-none tabular-nums font-light tracking-tight ${c.text} ${isRunning ? c.glow : ''} transition-all`}>
+          <div className={`text-[5rem] sm:text-[6rem] md:text-[8rem] leading-none tabular-nums font-light tracking-tight ${c.text} ${isRunning ? c.glow : ''} transition-all`}>
             {mins}
             <span className={`${isRunning ? 'breathe' : 'opacity-40'}`}>:</span>
             {secs}
@@ -79,16 +82,26 @@ export function Timer() {
 
         {/* Progress bar - full width, brutal */}
         <div className="w-full h-1 bg-edge relative overflow-hidden">
-          <div
-            className={`h-full ${c.bar} transition-all duration-1000 ease-linear`}
-            style={{ width: `${pct}%` }}
-          />
+          {sessionType !== 'stopwatch' && (
+            <div
+              className={`h-full ${c.bar} transition-all duration-1000 ease-linear`}
+              style={{ width: `${pct}%` }}
+            />
+          )}
         </div>
 
-        {/* Time labels */}
-        <div className="w-full flex justify-between mt-2 text-[9px] text-dim tabular-nums">
-          <span>{Math.floor(elapsed / 60)}m elapsed</span>
-          <span>{Math.floor(timeLeft / 60)}m remaining</span>
+        {/* Labels below bar */}
+        <div className="flex justify-between mt-3 text-[9px] text-dim uppercase tracking-widest font-mono">
+          <span>
+            {sessionType === 'stopwatch' 
+              ? 'COUNTING UP' 
+              : `${Math.floor(elapsed / 60)}m elapsed`}
+          </span>
+          <span>
+            {sessionType === 'stopwatch'
+              ? '∞'
+              : `${Math.ceil(timeLeft / 60)}m remaining`}
+          </span>
         </div>
       </div>
 
@@ -102,19 +115,13 @@ export function Timer() {
               : `border-neon bg-neon text-void hover:shadow-[0_0_20px_rgba(0,255,159,0.3)]`
           }`}
         >
-          {isRunning ? '❚❚ PAUSE' : '▶ START'}
+          {isRunning ? '|| PAUSE' : '▶ START'}
         </button>
-        <button
-          onClick={reset}
-          className="px-5 py-3.5 text-[11px] uppercase tracking-[0.2em] border border-edge text-dim hover:text-white hover:border-muted transition-all"
-        >
-          RST
+        <button onClick={reset} className="text-[10px] uppercase tracking-widest px-4 border border-edge text-dim hover:text-white hover:bg-surface transition-colors">
+          RESET
         </button>
-        <button
-          onClick={skip}
-          className="px-5 py-3.5 text-[11px] uppercase tracking-[0.2em] border border-edge text-dim hover:text-white hover:border-muted transition-all"
-        >
-          SKP »
+        <button onClick={skip} className="text-[10px] uppercase tracking-widest px-4 border border-edge text-dim hover:text-white hover:bg-surface transition-colors">
+          SKIP »
         </button>
       </div>
     </div>
