@@ -2,9 +2,15 @@ import Database from '@tauri-apps/plugin-sql';
 
 let dbInstance: Database | null = null;
 
+declare global {
+  interface Window {
+    __TAURI_INTERNALS__?: any;
+  }
+}
+
 // Mock data for browser fallback
 const mockSessions: any[] = [];
-const isBrowser = !window.__TAURI_INTERNALS__;
+const isBrowser = typeof window !== 'undefined' && !window.__TAURI_INTERNALS__;
 
 export async function getDb(): Promise<Database | null> {
   if (isBrowser) return null;
