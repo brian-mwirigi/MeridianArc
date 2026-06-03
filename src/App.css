@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; }
+  body {
+    @apply bg-void text-muted select-none overflow-x-hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: #00ff9f;
+    color: #000;
+  }
+}
+
+/* Scrollbar - razor thin */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #222; }
+::-webkit-scrollbar-thumb:hover { background: #333; }
+
+/* Grid background */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Neon glow text */
+.neon { text-shadow: 0 0 8px rgba(0,255,159,0.5), 0 0 20px rgba(0,255,159,0.15); }
+.neon-amber { text-shadow: 0 0 8px rgba(255,184,0,0.5), 0 0 20px rgba(255,184,0,0.15); }
+.neon-hot { text-shadow: 0 0 8px rgba(255,62,62,0.5), 0 0 20px rgba(255,62,62,0.15); }
+
+/* Border glow */
+.border-glow {
+  box-shadow: 0 0 0 1px #222, inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* Blink cursor */
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+.cursor-blink { animation: blink 1s step-end infinite; }
+
+/* Pulse for running state */
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.breathe { animation: breathe 2s ease-in-out infinite; }
+
+/* Focus mode transition */
+.focus-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Number input - hide arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
